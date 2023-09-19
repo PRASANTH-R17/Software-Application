@@ -1,0 +1,121 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.Collection;
+
+public class Main {
+    public static ArrayList<Taxi> createTaxis(int TotalTaxis){
+        ArrayList<Taxi> taxis=new ArrayList<Taxi>();
+        for(int i=0 ; i< TotalTaxis; i++)
+        {
+            taxis.add(new Taxi());
+            taxis.get(i).TaxiID="Taxi 0"+(i+1);
+        }
+        return taxis;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static ArrayList<Taxi> sameLocation(ArrayList<Taxi> taxis,char pickupPoint,int pickupTime){
+        ArrayList<Taxi> samelocationTaxis = new ArrayList<Taxi>();
+
+        for(Taxi t:taxis)
+            if(t.currentPoint == pickupPoint &&  t.freeTime <= pickupTime)
+                samelocationTaxis.add(t);
+
+        //Sort the sameLocation Based on Total Earning (min to max)
+        for(int i=0 ; i<samelocationTaxis.size()-1 ; i++)
+            for(int j=i+1 ; j<samelocationTaxis.size() ; j++) {
+                if (samelocationTaxis.get(i).TotalEarning > samelocationTaxis.get(j).TotalEarning)
+                    Collections.swap(samelocationTaxis,i,j);
+            }
+
+        return samelocationTaxis;
+
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static ArrayList<Taxi> diffLocation(ArrayList<Taxi> taxis,char pickupPoint,int pickupTime){
+        ArrayList<Taxi> diffLocation = new ArrayList<Taxi>();
+
+        for(Taxi t: taxis)
+            if( pickupTime  >= t.freeTime + Math.abs(t.currentPoint - pickupPoint ) )
+                diffLocation.add(t);
+
+        // sort a Taxi based on Nearest Taxi
+        for(int i=0;i < diffLocation.size()-1 ; i++)
+            for(int j=i+1;i < diffLocation.size() ; j++)
+                if( Math.abs(pickupPoint - diffLocation.get(i).currentPoint) > Math.abs(pickupPoint - diffLocation.get(i).currentPoint) )
+                    Collections.swap(taxis,i,j);
+
+        return diffLocation;
+
+
+    } //diffLocation method
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static void main(String[] args) {
+
+        Scanner sc =  new Scanner(System.in);
+        int TotalTaxis=4;
+        ArrayList<Taxi> taxis = createTaxis(TotalTaxis);
+        int customerID=1;
+
+        while(true){
+            System.out.println("Select Option \n0 --> Booking Taxis \n1 --> Get Customer Details and Taxi Details");
+            int option=sc.nextInt();
+
+            switch(option) {
+                case 0:
+                    System.out.println("Enter Pickup Point : ");
+                    char pickupPoint=sc.next().charAt(0);
+                    System.out.println("Enter Drop Point : ");
+                    char dropPoint=sc.next().charAt(0);
+                    System.out.println("Enter Pickup Time : ");
+                    int pickupTime=sc.nextInt();
+
+                    System.out.println(pickupPoint+" "+dropPoint+" "+pickupTime);
+
+                    ArrayList<Taxi>availableTaxi = sameLocation(taxis,pickupPoint,pickupTime);
+                    if(availableTaxi.size() != 0)
+                    {
+                        availableTaxi.get(0).activateTaxi(customerID, pickupPoint, dropPoint, pickupTime);
+                        break;
+                    }
+                    System.out.println("No Taxi Available in Same Location");
+
+                    availableTaxi=diffLocation(taxis,pickupPoint,pickupTime);
+
+
+                    if(availableTaxi.size() != 0)
+                    {
+                        for(Taxi t : availableTaxi)
+                            System.out.println(t.TaxiID);
+
+                        availableTaxi.get(0).activateTaxi(customerID, pickupPoint, dropPoint, pickupTime);
+                        break;
+                    }
+
+                    System.out.println("No Taxi are Available at this Time");
+                    break;
+
+
+                case 1:
+                    for(Taxi t :taxis)
+                        t.printPassengerDetail();
+                    break;
+
+
+
+
+            } //switch
+
+
+        } //while loop
+
+
+    }
+}

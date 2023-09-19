@@ -1,0 +1,61 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.Collection;
+
+public class Taxi {
+
+    String TaxiID;
+    static char currentPoint;
+    int TotalEarning;
+    int freeTime; // Next Free Time
+    ArrayList<String> customerDetails = new  ArrayList<String>();
+
+    public Taxi(){
+        currentPoint='A';
+        TotalEarning=0;
+        freeTime=5;
+    }
+
+    public void activateTaxi(int customerID, char pickupPoint,char dropPoint,int pickupTime)
+    {
+
+        // Calculate Values
+        int pickupDistance=Math.abs(currentPoint - pickupPoint);
+        int TravelDistance=Math.abs(pickupPoint - dropPoint); // Total Distance in point Not Km
+
+        int totalDistanceCover= pickupDistance + TravelDistance;
+
+        int travelTime=TravelDistance * 1;
+        int dropTime = pickupTime + TravelDistance;
+        int amount = (15*TravelDistance-5)*10 + 100;
+
+        //print Status
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println("Taxi booking Success");
+        System.out.println("Taxi ID : "+TaxiID);
+        System.out.println("Address "+pickupPoint+" ---> "+dropPoint);
+        System.out.println("Waiting Time : "+Math.abs((pickupDistance + freeTime) - pickupTime));
+        System.out.println("Travel Time : "+travelTime+"( "+pickupTime+" ------> "+dropTime+")");
+        System.out.println("Amount : "+amount);
+        System.out.println("--------------------------------------------------------------------");
+
+        //Update value
+
+        currentPoint=dropPoint;
+        TotalEarning = TotalEarning + amount;
+        freeTime=dropTime;
+
+        String CustomerDetail=customerID+"        "+pickupPoint+"        "+dropPoint+"        "+pickupTime+"        "+amount;
+        customerDetails.add(CustomerDetail);
+        customerID++;
+
+    }
+
+    public void printPassengerDetail(){
+
+        for(String p:passengerDetails)
+            System.out.println(p);
+    }
+
+}
